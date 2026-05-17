@@ -1,17 +1,49 @@
 # Codex
 
+## Настройка режима OAuth-авторизации (рекомендуется)
+
+Запустите сервер CLIProxyAPI, затем войдите в Codex CLI или Codex App, используя учётную запись ChatGPT (любая подписка, включая бесплатную).
+
+Отредактируйте файл `~/.codex/config.toml` и добавьте следующее содержимое:
+
+```toml
+model = "gpt-5.5" # Или gpt-5.5, вы также можете использовать любую из поддерживаемых нами моделей.
+model_provider = "cliproxyapi"
+
+# Отключает все запросы на подтверждение действий. Опасно — не рекомендуется для новичков в Codex. Удалите # для включения.
+# approval_policy = "never"
+
+# Предоставляет неограниченный доступ к системе. Опасно — не рекомендуется для новичков в Codex. Удалите # для включения.
+# sandbox_mode = "danger-full-access" 
+
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+supports_websockets = true
+
+[model_providers.cliproxyapi]
+base_url = "http://127.0.0.1:8317/v1"
+experimental_bearer_token = "sk-dummy" # Замените на API-ключ, созданный для Codex в CLIProxyAPI
+name = "cliproxyapi"
+wire_api = "responses"
+requires_openai_auth = true
+```
+
+Редактировать файл `auth.json` не требуется.
+
+## Настройка режима API
+
 Запустите сервер CLIProxyAPI, а затем отредактируйте файлы `~/.codex/config.toml` и `~/.codex/auth.json`.
 
 config.toml:
 ```toml
-# Отключает все запросы на подтверждение действий пользователем. Чрезвычайно опасно — удалите этот параметр, если вы новичок в Codex.
+# Отключает все запросы на подтверждение действий. Опасно — не рекомендуется для новичков в Codex. Удалите # для включения.
 # approval_policy = "never"
 
-# Предоставляет неограниченный доступ к системе: AI может читать/записывать любые файлы и выполнять команды с доступом к сети. Высокий риск — удалите этот параметр, если вы новичок в Codex.
+# Предоставляет неограниченный доступ к системе. Опасно — не рекомендуется для новичков в Codex. Удалите # для включения.
 # sandbox_mode = "danger-full-access"
 
 model_provider = "cliproxyapi"
-model = "gpt-5-codex" # Или gpt-5, вы также можете использовать любую из поддерживаемых нами моделей.
+model = "gpt-5.5" # Или gpt-5.4, вы также можете использовать любую из поддерживаемых нами моделей.
 model_reasoning_effort = "high"
 
 [model_providers.cliproxyapi]
