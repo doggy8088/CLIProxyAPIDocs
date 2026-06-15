@@ -40,7 +40,7 @@ If a plaintext key is detected in the config at startup, it will be bcrypt‑has
 
 ### Usage Telemetry Queue
 - Legacy aggregated usage endpoints (`/usage`, `/usage/export`, `/usage/import`) are no longer available. Use `GET /usage-queue` for per-request queue records.
-- For per-request usage records as JSON, use the [Redis Usage Queue](/management/redis-usage-queue) (RESP) exposed on the same port as HTTP.
+- For per-request usage records as JSON, use the [Redis Usage Queue](./redis-usage-queue) (RESP) exposed on the same port as HTTP.
 - Use `/usage-statistics-enabled` to enable/disable usage publishing.
 
 - GET `/usage-queue?count=10` — Pop up to `count` usage records from the queue

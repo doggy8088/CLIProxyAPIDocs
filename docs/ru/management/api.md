@@ -39,7 +39,7 @@ outline: 'deep'
 
 ### Очередь Usage Telemetry
 - Устаревшие агрегированные эндпоинты usage (`/usage`, `/usage/export`, `/usage/import`) больше недоступны. Используйте `GET /usage-queue` для per-request записей очереди.
-- Для per-request usage записей в JSON используйте [Redis очередь usage](/ru/management/redis-usage-queue) (RESP), доступную на том же порту, что и HTTP.
+- Для per-request usage записей в JSON используйте [Redis очередь usage](./redis-usage-queue) (RESP), доступную на том же порту, что и HTTP.
 - Используйте `/usage-statistics-enabled` для включения/отключения публикации usage.
 
 - GET `/usage-queue?count=10` — Извлечь из очереди до `count` usage записей

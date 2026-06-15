@@ -40,7 +40,7 @@ outline: 'deep'
 
 ### 用量统计队列
 - 旧的内存聚合 usage 端点（`/usage`、`/usage/export`、`/usage/import`）已移除。如需读取每次请求的队列记录，请使用 `GET /usage-queue`。
-- 如需以 JSON 拉取每次请求的用量记录，请使用同端口暴露的 [Redis 用量队列](/management/redis-usage-queue)（RESP）。
+- 如需以 JSON 拉取每次请求的用量记录，请使用同端口暴露的 [Redis 用量队列](./redis-usage-queue)（RESP）。
 - 通过 `/usage-statistics-enabled` 开启/关闭用量发布。
 
 - GET `/usage-queue?count=10` — 从队列中弹出最多 `count` 条用量记录
