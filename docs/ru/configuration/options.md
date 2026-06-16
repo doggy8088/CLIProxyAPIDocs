@@ -24,7 +24,7 @@
 | `max-retry-interval` | integer | `30` | Максимальное время ожидания (в секундах) восстановления учетных данных перед повторной попыткой. |
 | `disable-image-generation` | boolean \| `"chat"` | `false` | Управляет встроенным инструментом `image_generation`: `true` отключает его везде (и возвращает 404 для `/v1/images/generations` и `/v1/images/edits`); `"chat"` отключает внедрение на endpoints не для изображений, но оставляет images endpoints включенными. |
 | `routing.strategy` | string | `"round-robin"` | Стратегия выбора учетных данных при наличии нескольких совпадений: `round-robin` или `fill-first`. |
-| `routing.session-affinity` | boolean | `false` | Включить session-sticky маршрутизацию для всех клиентов. Session ID извлекается из `metadata.user_id` (Claude Code), `X-Session-ID`, `Session_id` (Codex), `X-Amp-Thread-Id` (Amp CLI), `X-Client-Request-Id` (PI), `conversation_id` или хэша сообщений. |
+| `routing.session-affinity` | boolean | `false` | Включить session-sticky маршрутизацию для всех клиентов. Session ID извлекается из `metadata.user_id` (Claude Code), `X-Session-ID`, `Session_id` (Codex), `X-Client-Request-Id` (PI), `conversation_id` или хэша сообщений. |
 | `routing.session-affinity-ttl` | string | `"1h"` | TTL хранения привязок session→auth. |
 | `ws-auth` | boolean | `false` | Требовать аутентификацию для `/v1/ws`. |
 | `nonstream-keepalive-interval` | integer | `0` | Интервал пустых строк для соединений без SSE (в секундах) для предотвращения таймаута простоя; 0 отключает функцию. |
@@ -118,19 +118,6 @@
 | `vertex-api-key.*.headers` | object | `{}` | Дополнительные заголовки. |
 | `vertex-api-key.*.models.*.name` | string | `""` | Имя вышестоящей модели. |
 | `vertex-api-key.*.models.*.alias` | string | `""` | Псевдоним клиента. |
-
-## Интеграция с Amp (`ampcode`)
-
-| Параметр | Тип | По умолчанию | Описание |
-| --- | --- | --- | --- |
-| `ampcode.upstream-url` | string | `""` | Upstream URL для OAuth/управления Amp CLI. |
-| `ampcode.upstream-api-key` | string | `""` | Переопределение API-ключа для upstream Amp. |
-| `ampcode.upstream-api-keys[].upstream-api-key` | string | `""` | Upstream-ключ для сопоставленных клиентов. |
-| `ampcode.upstream-api-keys[].api-keys` | string[] | `[]` | Ключи клиентов, направляемые на этот upstream-ключ. |
-| `ampcode.restrict-management-to-localhost` | boolean | `false` | Ограничить маршруты управления Amp только для localhost. |
-| `ampcode.force-model-mappings` | boolean | `false` | Принудительное сопоставление моделей перед проверкой локальных API-ключей. |
-| `ampcode.model-mappings[].from` | string | `""` | Модель, запрошенная Amp. |
-| `ampcode.model-mappings[].to` | string | `""` | Локальная доступная модель для маршрутизации. |
 
 ## Управление моделями OAuth
 | Параметр | Тип | По умолчанию | Описание |

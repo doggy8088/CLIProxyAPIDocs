@@ -69,7 +69,6 @@ export default defineConfig({
                     {text: 'Codex', link: '/cn/agent-client/codex'},
                     {text: 'Gemini CLI', link: '/cn/agent-client/gemini-cli'},
                     {text: 'Factory Droid', link: '/cn/agent-client/droid'},
-                    {text: 'Amp CLI', link: '/cn/agent-client/amp-cli'},
                     {text: 'OpenCode', link: '/cn/agent-client/opencode'}
                 ]
             },
@@ -141,7 +140,6 @@ export default defineConfig({
                     {text: '云部署（对象存储）', link: '/cn/hands-on/tutorial-9'},
                     {text: '云部署（Git存储）', link: '/cn/hands-on/tutorial-10'},
                     {text: '零成本部署AIStudio反代', link: '/cn/hands-on/tutorial-11'},
-                    {text: 'AmpCode食用指南', link: '/cn/hands-on/tutorial-12'},
                 ]
             },
 

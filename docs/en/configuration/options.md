@@ -24,7 +24,7 @@ Defaults stay aligned with `config.example.yaml`.
 | `max-retry-interval` | integer | `30` | Max wait (seconds) for cooled-down credential before retry. |
 | `disable-image-generation` | boolean \| `"chat"` | `false` | Control built-in `image_generation` tool injection/availability: `true` disables everywhere (also returns 404 for `/v1/images/generations` and `/v1/images/edits`); `"chat"` disables injection on non-images endpoints but keeps the image endpoints enabled. |
 | `routing.strategy` | string | `"round-robin"` | Credential selection when multiple match: `round-robin` or `fill-first`. |
-| `routing.session-affinity` | boolean | `false` | Enable session-sticky routing for all clients. Session IDs are extracted from `metadata.user_id` (Claude Code), `X-Session-ID`, `Session_id` (Codex), `X-Amp-Thread-Id` (Amp CLI), `X-Client-Request-Id` (PI), `conversation_id`, or a message hash. |
+| `routing.session-affinity` | boolean | `false` | Enable session-sticky routing for all clients. Session IDs are extracted from `metadata.user_id` (Claude Code), `X-Session-ID`, `Session_id` (Codex), `X-Client-Request-Id` (PI), `conversation_id`, or a message hash. |
 | `routing.session-affinity-ttl` | string | `"1h"` | TTL for session-to-auth bindings. |
 | `ws-auth` | boolean | `false` | Require auth for `/v1/ws`. |
 | `nonstream-keepalive-interval` | integer | `0` | Non-SSE blank line interval (seconds) to prevent idle timeout; 0 disables. |
@@ -118,19 +118,6 @@ Defaults stay aligned with `config.example.yaml`.
 | `vertex-api-key.*.headers` | object | `{}` | Extra headers. |
 | `vertex-api-key.*.models.*.name` | string | `""` | Upstream model name. |
 | `vertex-api-key.*.models.*.alias` | string | `""` | Client alias. |
-
-## Amp Integration (`ampcode`)
-
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| `ampcode.upstream-url` | string | `""` | Upstream URL for Amp CLI OAuth/management. |
-| `ampcode.upstream-api-key` | string | `""` | Override API key for Amp upstream. |
-| `ampcode.upstream-api-keys[].upstream-api-key` | string | `""` | Upstream key for mapped clients. |
-| `ampcode.upstream-api-keys[].api-keys` | string[] | `[]` | Client keys routed to that upstream key. |
-| `ampcode.restrict-management-to-localhost` | boolean | `false` | Restrict Amp management routes to localhost. |
-| `ampcode.force-model-mappings` | boolean | `false` | Force model mappings before checking local API keys. |
-| `ampcode.model-mappings[].from` | string | `""` | Amp-requested model. |
-| `ampcode.model-mappings[].to` | string | `""` | Local available model to route to. |
 
 ## OAuth Model Controls
 

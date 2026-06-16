@@ -96,7 +96,7 @@ routing:
   strategy: "round-robin" # 轮询（默认）或 fill-first
   # 为所有客户端启用会话粘性路由。
   # 会话 ID 来源：metadata.user_id（Claude Code 会话格式）、
-  # X-Session-ID、Session_id（Codex）、X-Amp-Thread-Id（Amp CLI）、
+  # X-Session-ID、Session_id（Codex）、
   # X-Client-Request-Id（PI）、conversation_id，或前几条消息的 hash。
   # 当绑定的凭据不可用时，会自动故障转移。
   session-affinity: false # 默认：false
@@ -210,41 +210,10 @@ vertex-api-key:
       - name: "gemini-2.5-pro"
         alias: "vertex-pro"
 
-# Amp 集成
-ampcode:
-  # Amp CLI OAuth 与管理功能的上游地址
-  upstream-url: "https://ampcode.com"
-  # 可选：覆盖 Amp 上游 API Key（否则使用环境变量或文件）
-  upstream-api-key: ""
-  # 按客户端的上游 API Key 映射
-  # 将顶层 api-keys 中的客户端密钥映射到不同的 Amp 上游密钥。
-  # 若未匹配到则回退到 upstream-api-key。
-  upstream-api-keys:
-    - upstream-api-key: "amp_key_for_team_a"    # 供这些客户端使用的上游密钥
-      api-keys:                                 # 使用该上游密钥的客户端密钥
-        - "your-api-key-1"
-        - "your-api-key-2"
-    - upstream-api-key: "amp_key_for_team_b"
-      api-keys:
-        - "your-api-key-3"
-  # 是否将 Amp 管理路由 (/api/auth, /api/user 等) 仅限 localhost（默认 false）
-  restrict-management-to-localhost: false
-  # 是否在检查本地 API 密钥前强制执行模型映射（默认 false）
-  force-model-mappings: false
-  # Amp 模型映射：当请求的模型不可用时路由到本地可用模型
-  # 适用于 Amp CLI 请求不可用模型（如 Claude Opus 4.5）但本地有相似模型的情况
-  model-mappings:
-    - from: "claude-opus-4-5-20251101"          # Amp 请求的模型
-      to: "gemini-claude-opus-4-5-thinking"     # 路由到的可用模型
-    - from: "claude-sonnet-4-5-20250929"
-      to: "gemini-claude-sonnet-4-5-thinking"
-    - from: "claude-haiku-4-5-20251001"
-      to: "gemini-2.5-flash"
-
 # 全局 OAuth 模型名称别名（按渠道）
 # 这些别名同时用于模型列表和请求路由的模型 ID 重命名。
 # 支持的渠道：gemini-cli、vertex、aistudio、antigravity、claude、codex。
-# 注意：别名不适用于 gemini-api-key、codex-api-key、claude-api-key、openai-compatibility、vertex-api-key 或 ampcode。
+# 注意：别名不适用于 gemini-api-key、codex-api-key、claude-api-key、openai-compatibility 或 vertex-api-key。
 # 您可以使用不同的别名重复相同的名称，以暴露多个客户端模型名称。
 oauth-model-alias:
   antigravity:

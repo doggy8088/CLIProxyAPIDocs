@@ -24,7 +24,7 @@
 | `max-retry-interval` | integer | `30` | 冷却凭据等待秒数上限，超出即触发重试。 |
 | `disable-image-generation` | boolean \| `"chat"` | `false` | 控制内置 `image_generation` 工具的注入/可用性：`true` 时完全禁用（同时 `/v1/images/generations` 与 `/v1/images/edits` 返回 404）；`"chat"` 时仅禁用非 images 端点的注入，但保留 images 端点可用。 |
 | `routing.strategy` | string | `"round-robin"` | 多匹配凭据的选择策略：`round-robin` 或 `fill-first`。 |
-| `routing.session-affinity` | boolean | `false` | 是否启用会话粘性路由。会话 ID 取自 `metadata.user_id`（Claude Code）、`X-Session-ID`、`Session_id`（Codex）、`X-Amp-Thread-Id`（Amp CLI）、`X-Client-Request-Id`（PI）、`conversation_id`，或消息 hash。 |
+| `routing.session-affinity` | boolean | `false` | 是否启用会话粘性路由。会话 ID 取自 `metadata.user_id`（Claude Code）、`X-Session-ID`、`Session_id`（Codex）、`X-Client-Request-Id`（PI）、`conversation_id`，或消息 hash。 |
 | `routing.session-affinity-ttl` | string | `"1h"` | 会话到凭据绑定的保留时长（TTL）。 |
 | `ws-auth` | boolean | `false` | 是否为 `/v1/ws` 启用认证。 |
 | `nonstream-keepalive-interval` | integer | `0` | 非 SSE 流每隔 N 秒发送空行防止空闲超时；0 禁用。 |
@@ -118,19 +118,6 @@
 | `vertex-api-key.*.headers` | object | `{}` | 额外请求头。 |
 | `vertex-api-key.*.models.*.name` | string | `""` | 上游模型名。 |
 | `vertex-api-key.*.models.*.alias` | string | `""` | 客户端别名。 |
-
-## Amp 集成 (`ampcode`)
-
-| 参数 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| `ampcode.upstream-url` | string | `""` | Amp CLI OAuth/管理上游地址。 |
-| `ampcode.upstream-api-key` | string | `""` | 覆盖用的 Amp 上游 API Key。 |
-| `ampcode.upstream-api-keys[].upstream-api-key` | string | `""` | 为特定客户端映射的上游 Key。 |
-| `ampcode.upstream-api-keys[].api-keys` | string[] | `[]` | 需要映射到该上游 Key 的客户端密钥。 |
-| `ampcode.restrict-management-to-localhost` | boolean | `false` | 是否将 Amp 管理路由限制为 localhost。 |
-| `ampcode.force-model-mappings` | boolean | `false` | 是否在检查本地 API 密钥前强制执行模型映射。 |
-| `ampcode.model-mappings[].from` | string | `""` | Amp 请求的模型名。 |
-| `ampcode.model-mappings[].to` | string | `""` | 本地可用模型名。 |
 
 ## OAuth 模型别名
 
