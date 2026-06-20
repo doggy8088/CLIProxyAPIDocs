@@ -326,6 +326,26 @@ If a plaintext key is detected in the config at startup, it will be bcrypt‑has
       ```json
       { "status": "ok" }
       ```
+- POST `/reset-quota` — Clear quota/cooldown routing state for one credential
+    - Request:
+      ```bash
+      curl -X POST -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer <MANAGEMENT_KEY>' \
+        -d '{"auth_index":"<AUTH_INDEX>"}' \
+        http://localhost:8317/v0/management/reset-quota
+      ```
+    - Response:
+      ```json
+      {
+        "status": "ok",
+        "auth_index": "<AUTH_INDEX>",
+        "models": ["gpt-5"]
+      }
+      ```
+    - Notes:
+        - `auth_index` is the stable runtime identifier returned by `GET /auth-files`.
+        - This endpoint does not accept auth file names or auth IDs.
+        - It clears the runtime quota/cooldown state and resumes the credential in routing immediately.
 
 ### API Keys (proxy service auth)
 These endpoints update the inline `config-api-key` provider inside the `auth.providers` section of the configuration. Legacy top-level `api-keys` remain in sync automatically.

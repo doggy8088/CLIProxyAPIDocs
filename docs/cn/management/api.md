@@ -326,6 +326,26 @@ outline: 'deep'
       ```json
       { "status": "ok" }
       ```
+- POST `/reset-quota` — 清除指定凭据的配额/cooldown 路由状态
+    - 请求：
+      ```bash
+      curl -X POST -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer <MANAGEMENT_KEY>' \
+        -d '{"auth_index":"<AUTH_INDEX>"}' \
+        http://localhost:8317/v0/management/reset-quota
+      ```
+    - 响应：
+      ```json
+      {
+        "status": "ok",
+        "auth_index": "<AUTH_INDEX>",
+        "models": ["gpt-5"]
+      }
+      ```
+    - 说明：
+        - `auth_index` 是 `GET /auth-files` 返回的稳定运行时凭据标识。
+        - 该接口不接受认证文件名或 auth ID。
+        - 调用后会清除运行时 quota/cooldown 状态，并立即恢复该凭据参与路由。
 
 ### API Keys（代理服务认证）
 这些接口会更新配置中 `auth.providers` 内置的 `config-api-key` 提供方，旧版顶层 `api-keys` 会自动保持同步。

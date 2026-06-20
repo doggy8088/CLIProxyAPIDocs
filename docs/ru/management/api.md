@@ -279,6 +279,7 @@ outline: 'deep'
     - Ответ:
       ```json
       { "status": "ok" }
+      ```
 ### Поведение при превышении квоты
 - GET `/quota-exceeded/switch-project`
     - Запрос:
@@ -309,7 +310,8 @@ outline: 'deep'
     - Ответ:
       ```json
       { "switch-preview-model": true }
-- PUT/PATCH `/quota-exceeded/switch-preview-model` — Boolean
+      ```
+- PUT/PATCH `/quota-exceeded/switch-preview-model` — Логическое значение
     - Запрос:
       ```bash
       curl -X PATCH -H 'Content-Type: application/json' \
@@ -321,6 +323,26 @@ outline: 'deep'
       ```json
       { "status": "ok" }
       ```
+- POST `/reset-quota` — Очистить состояние маршрутизации quota/cooldown для учетных данных
+    - Запрос:
+      ```bash
+      curl -X POST -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer <MANAGEMENT_KEY>' \
+        -d '{"auth_index":"<AUTH_INDEX>"}' \
+        http://localhost:8317/v0/management/reset-quota
+      ```
+    - Ответ:
+      ```json
+      {
+        "status": "ok",
+        "auth_index": "<AUTH_INDEX>",
+        "models": ["gpt-5"]
+      }
+      ```
+    - Примечания:
+        - `auth_index` — стабильный runtime идентификатор учетных данных, возвращаемый `GET /auth-files`.
+        - Этот эндпоинт не принимает имена файлов аутентификации или auth ID.
+        - Он очищает runtime состояние quota/cooldown и сразу возвращает учетные данные в маршрутизацию.
 
 ### API Keys (авторизация прокси-сервиса)
 Эти эндпоинты обновляют встроенный провайдер `config-api-key` внутри раздела `auth.providers` конфигурации. Устаревшие `api-keys` верхнего уровня синхронизируются автоматически.
