@@ -65,8 +65,10 @@ You can download our desktop GUI app from [here](https://github.com/router-for-m
 
 ## Docker
 
+Mount your plugins directory to `/CLIProxyAPI/plugins` so plugin installations persist across container restarts.
+
 ```bash
-docker run --rm -p 8317:8317 -v /path/to/your/config.yaml:/CLIProxyAPI/config.yaml -v /path/to/your/auth-dir:/root/.cli-proxy-api eceasy/cli-proxy-api:latest
+docker run --rm -p 8317:8317 -v /path/to/your/config.yaml:/CLIProxyAPI/config.yaml -v /path/to/your/auth-dir:/root/.cli-proxy-api -v /path/to/your/plugins-dir:/CLIProxyAPI/plugins eceasy/cli-proxy-api:latest
 ```
 
 ## Building from Source

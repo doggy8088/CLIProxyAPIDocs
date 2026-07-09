@@ -56,8 +56,10 @@ systemctl --user enable cli-proxy-api
 
 ## Docker
 
+Смонтируйте каталог плагинов в `/CLIProxyAPI/plugins`, чтобы установленные плагины сохранялись после перезапуска контейнера.
+
 ```bash
-docker run --rm -p 8317:8317 -v /path/to/your/config.yaml:/CLIProxyAPI/config.yaml -v /path/to/your/auth-dir:/root/.cli-proxy-api eceasy/cli-proxy-api:latest
+docker run --rm -p 8317:8317 -v /path/to/your/config.yaml:/CLIProxyAPI/config.yaml -v /path/to/your/auth-dir:/root/.cli-proxy-api -v /path/to/your/plugins-dir:/CLIProxyAPI/plugins eceasy/cli-proxy-api:latest
 ```
 
 ## Сборка из исходного кода

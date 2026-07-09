@@ -13,6 +13,11 @@
     ```
     *（Windows 用户请注意：您可以在 CMD 或 PowerShell 中使用 `copy config.example.yaml config.yaml`。）*
 
+    若需让插件商店安装的插件在容器重启后仍然保留，请在 `docker-compose.yml` 中增加插件目录挂载：
+    ```yaml
+    - ./plugins:/CLIProxyAPI/plugins
+    ```
+
 3.  启动服务：
     -   **适用于大多数用户（推荐）：**
         运行以下命令，使用 Docker Hub 上的预构建镜像启动服务。服务将在后台运行。

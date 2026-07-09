@@ -13,6 +13,11 @@
     ```
     *(Note for Windows users: You can use `copy config.example.yaml config.yaml` in CMD or PowerShell.)*
 
+    To persist plugin installations across container restarts, add a plugins volume to `docker-compose.yml`:
+    ```yaml
+    - ./plugins:/CLIProxyAPI/plugins
+    ```
+
 3.  Start the service:
     -   **For most users (recommended):**
         Run the following command to start the service using the pre-built image from Docker Hub. The service will run in the background.
