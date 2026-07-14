@@ -7,7 +7,7 @@ Start CLIProxyAPI server, then log in to Codex CLI or Codex App using your ChatG
 Edit the `~/.codex/config.toml` file and add the following content:
 
 ```toml
-model = "gpt-5.5" # Or gpt-5.5, you can also use any of the models that we support.
+model = "gpt-5.6-sol" # Or gpt-5.6-terra, gpt-5.6-luna, you can also use any of the models that we support.
 model_provider = "cliproxyapi"
 
 # Disables all user confirmation prompts for actions. Dangerous—not recommended for Codex beginners. Remove the # to enable.
@@ -18,14 +18,14 @@ model_provider = "cliproxyapi"
 
 model_reasoning_effort = "xhigh"
 plan_mode_reasoning_effort = "xhigh"
-supports_websockets = true
 
 [model_providers.cliproxyapi]
 base_url = "http://127.0.0.1:8317/v1"
 experimental_bearer_token = "sk-dummy" # Replace with the API Key you created for Codex in CLIProxyAPI
-name = "cliproxyapi"
+name = "OpenAI"
 wire_api = "responses"
 requires_openai_auth = true
+supports_websockets = true # Choose whether to enable websockets as needed
 ```
 
 No need to edit the `auth.json` file.
@@ -43,7 +43,7 @@ config.toml:
 # sandbox_mode = "danger-full-access"
 
 model_provider = "cliproxyapi"
-model = "gpt-5.5" # Or gpt-5.4, you can also use any of the models that we support.
+model = "gpt-5.6-sol" # Or gpt-5.6-terra, gpt-5.6-luna, you can also use any of the models that we support.
 model_reasoning_effort = "high"
 
 [model_providers.cliproxyapi]

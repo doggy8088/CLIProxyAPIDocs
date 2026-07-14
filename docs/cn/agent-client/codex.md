@@ -7,7 +7,7 @@
 修改 `~/.codex/config.toml` 文件，添加以下内容：
 
 ```toml
-model = "gpt-5.5" # 或者是gpt-5.5，你也可以使用任何我们支持的模型
+model = "gpt-5.6-sol" # 或者是gpt-5.6-terra、gpt-5.6-luna，你也可以使用任何我们支持的模型
 model_provider = "cliproxyapi"
 
 # 无需确认是否执行操作，危险指令，初次接触codex不建议开启，移除#号即可开启
@@ -18,14 +18,14 @@ model_provider = "cliproxyapi"
 
 model_reasoning_effort = "xhigh"
 plan_mode_reasoning_effort = "xhigh"
-supports_websockets = true
 
 [model_providers.cliproxyapi]
 base_url = "http://127.0.0.1:8317/v1"
 experimental_bearer_token = "sk-dummy" # 这里修改为你在 CLIProxyAPI 中为 Codex 创建的 API Key
-name = "cliproxyapi"
+name = "OpenAI"
 wire_api = "responses"
 requires_openai_auth = true
+supports_websockets = true # 按需要选择是否开启websockets
 ```
 
 无需修改 `auth.json` 文件。
@@ -43,7 +43,7 @@ config.toml:
 # sandbox_mode = "danger-full-access"
 
 model_provider = "cliproxyapi"
-model = "gpt-5.5" # 或者是gpt-5.4，你也可以使用任何我们支持的模型
+model = "gpt-5.6-sol" # 或者是gpt-5.6-terra、gpt-5.6-luna，你也可以使用任何我们支持的模型
 model_reasoning_effort = "high"
 
 [model_providers.cliproxyapi]
