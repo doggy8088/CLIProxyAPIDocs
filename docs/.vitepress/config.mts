@@ -1,11 +1,16 @@
 import { defineConfig } from 'vitepress'
 import cnConfig from '../cn/config'
+import zhTWConfig from '../zh-TW/config'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
 	title: 'CLIProxyAPI',
 	description:
 		'Wrap ChatGPT Codex, Claude Code, and other model providers as an OpenAI/Gemini/Claude/Codex compatible API service.',
+	base: '/',
+	sitemap: {
+		hostname: 'https://cliproxyapi.gh.miniasp.com',
+	},
 	rewrites: {
 		'en/:rest*': ':rest*',
 	},
@@ -240,13 +245,21 @@ export default defineConfig({
 		cn: {
 			label: '简体中文',
 			lang: 'zh-Hans',
-			link: '/cn',
+			link: '/cn/',
 			themeConfig: cnConfig.themeConfig,
+		},
+		'zh-TW': {
+			label: '正體中文',
+			lang: 'zh-TW',
+			link: '/zh-TW/',
+			title: zhTWConfig.title,
+			description: zhTWConfig.description,
+			themeConfig: zhTWConfig.themeConfig,
 		},
 		ru: {
 			label: 'Русский',
 			lang: 'ru-RU',
-			link: '/ru',
+			link: '/ru/',
 			themeConfig: {
 				nav: [
 					{ text: 'Главная', link: '/ru/' },
