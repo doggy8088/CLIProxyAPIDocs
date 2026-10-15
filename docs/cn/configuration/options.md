@@ -80,6 +80,7 @@ v8 文件需要设置 `config-version: 8`。已有的旧配置文件和 `/v0/man
 | `requests.nonstream-keepalive-interval` | integer | `0` | 为非流式响应每 N 秒输出空行。`0` 禁用。 |
 | `requests.streaming.keepalive-seconds` | integer | `0` | SSE 保活间隔。`<= 0` 禁用。 |
 | `requests.streaming.bootstrap-retries` | integer | `0` | 首字节发送前的安全流式重试次数。 |
+| `requests.streaming.send-keepalive-before-ft` | boolean | `false` | 当 `keepalive-seconds > 0` 时，在首个 token 到达前发送 SSE 保活。 |
 
 单个条目的 `proxy-url` 可以是 `direct` 或 `none`，以同时绕过该代理和环境代理。以 `$` 开头的请求头值会复制对应的客户端请求头；客户端没有发送时则省略该头。
 

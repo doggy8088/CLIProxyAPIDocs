@@ -80,6 +80,7 @@ Per-credential `request-retry`: an explicit non-negative value wins, `0` admits 
 | `requests.nonstream-keepalive-interval` | integer | `0` | Emit blank lines every N seconds for non-streaming responses. `0` disables it. |
 | `requests.streaming.keepalive-seconds` | integer | `0` | SSE keep-alive interval. Values `<= 0` disable it. |
 | `requests.streaming.bootstrap-retries` | integer | `0` | Safe streaming retries before the first byte is sent. |
+| `requests.streaming.send-keepalive-before-ft` | boolean | `false` | Send SSE keep-alives before the first token arrives when `keepalive-seconds > 0`. |
 
 Per-entry `proxy-url` accepts `direct` or `none` to bypass both this proxy and environment proxies. Header values that start with `$` copy that client request header and are omitted when the client did not send it.
 

@@ -115,8 +115,9 @@ codex-instructions-enabled: false
 
 # 流式传输行为（SSE keep-alive 与安全启动重试）
 streaming:
-  keepalive-seconds: 15   # 默认：0（禁用）；≤0 关闭 keep-alive。
-  bootstrap-retries: 1    # 默认：0（禁用）；首字节前的重试次数。
+  keepalive-seconds: 15         # 默认：0（禁用）；≤0 关闭 keep-alive。
+  bootstrap-retries: 1          # 默认：0（禁用）；首字节前的重试次数。
+  send-keepalive-before-ft: false # 默认：false；当 keepalive-seconds > 0 时是否在首个 token 前发送保活。
 
 # Gemini API 密钥
 gemini-api-key:

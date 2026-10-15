@@ -80,6 +80,7 @@
 | `requests.nonstream-keepalive-interval` | integer | `0` | Выводить пустые строки каждые N секунд для нестриминговых ответов. `0` отключает. |
 | `requests.streaming.keepalive-seconds` | integer | `0` | Интервал SSE keep-alive. Значения `<= 0` отключают его. |
 | `requests.streaming.bootstrap-retries` | integer | `0` | Безопасные повторы стриминга до отправки первого байта. |
+| `requests.streaming.send-keepalive-before-ft` | boolean | `false` | Отправлять SSE keep-alive до получения первого токена при `keepalive-seconds > 0`. |
 
 `proxy-url` отдельной записи принимает `direct` или `none`, чтобы обойти и этот прокси, и прокси окружения. Значения заголовков, начинающиеся с `$`, копируют соответствующий заголовок клиентского запроса и опускаются, если клиент его не отправил.
 

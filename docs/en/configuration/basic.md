@@ -116,8 +116,9 @@ codex-instructions-enabled: false
 
 # Streaming behavior (SSE keep-alives + safe bootstrap retries).
 streaming:
-  keepalive-seconds: 15   # Default: 0 (disabled). <= 0 disables keep-alives.
-  bootstrap-retries: 1    # Default: 0 (disabled). Retries before first byte is sent.
+  keepalive-seconds: 15         # Default: 0 (disabled). <= 0 disables keep-alives.
+  bootstrap-retries: 1          # Default: 0 (disabled). Retries before first byte is sent.
+  send-keepalive-before-ft: false # Default: false. Send SSE keep-alives before the first token when keepalive-seconds > 0.
 
 # Gemini API keys
 gemini-api-key:

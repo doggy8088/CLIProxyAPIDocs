@@ -118,6 +118,7 @@ codex-instructions-enabled: false
 streaming:
   keepalive-seconds: 15 # По умолчанию: 0 (отключено). <= 0 отключает keep-alive.
   bootstrap-retries: 1 # По умолчанию: 0 (отключено). Повторы до отправки первого байта.
+  send-keepalive-before-ft: false # По умолчанию: false. Отправлять SSE keep-alive до первого токена при keepalive-seconds > 0.
 
 # API-ключи Gemini
 gemini-api-key:
