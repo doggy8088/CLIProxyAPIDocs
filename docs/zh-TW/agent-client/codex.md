@@ -19,13 +19,17 @@ model_provider = "cliproxyapi"
 model_reasoning_effort = "xhigh"
 plan_mode_reasoning_effort = "xhigh"
 
+experimental_realtime_webrtc_call_base_url = "http://127.0.0.1:8317/v1" # Codex App 語音聊天需要 WebRTC。若不使用語音聊天，可省略此選項。
+experimental_realtime_ws_base_url = "http://127.0.0.1:8317/v1" # Codex App 語音聊天需要 WebRTC。若不使用語音聊天，可省略此選項。
+
 [model_providers.cliproxyapi]
 base_url = "http://127.0.0.1:8317/v1"
-experimental_bearer_token = "sk-dummy" # 改為你在 CLIProxyAPI 中為 Codex 建立的 API 金鑰
+http_headers = { "X-Api-Key" = "sk-dummy" }  # 替換為你在 CLIProxyAPI 中為 Codex 建立的 API 金鑰
 name = "OpenAI"
 wire_api = "responses"
 requires_openai_auth = true
 supports_websockets = true # 依需求決定是否啟用 WebSocket
+supports_standalone_web_search = true
 ```
 
 無需修改 `auth.json` 檔案。
@@ -50,6 +54,8 @@ model_reasoning_effort = "high"
 name = "cliproxyapi"
 base_url = "http://127.0.0.1:8317/v1"
 wire_api = "responses"
+http_headers = { "X-OpenAI-Actor-Authorization" = "local-proxy" }
+requires_openai_auth = true
 ```
 
 auth.json:

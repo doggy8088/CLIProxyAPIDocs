@@ -8,13 +8,32 @@ brew services start cliproxyapi
 ```
 
 > 使用 Homebrew 安裝並透過 `brew services` 執行時，預設設定檔路徑是 `$(brew --prefix)/etc/cliproxyapi.conf`（Apple Silicon 常見為 `/opt/homebrew/etc/cliproxyapi.conf`，Intel 常見為 `/usr/local/etc/cliproxyapi.conf`）。
-> 如果你希望繼續使用 `~/.cli-proxy-api/config.yaml` 作為主要設定檔，可將預設路徑建立為該檔案的符號連結：
->
+> 如果你希望繼續使用 `~/.cli-proxy-api/config.yaml` 作為主要設定檔，請將 Homebrew 路徑設為**指向**該檔案的符號連結。符號連結的目標在啟動服務前**必須存在**（懸空的符號連結會讓服務立即結束）：
 > ```bash
+> brew_conf="$(brew --prefix)/etc/cliproxyapi.conf"
+> home_conf="$HOME/.cli-proxy-api/config.yaml"
+>
 > brew services stop cliproxyapi
-> mv "$(brew --prefix)/etc/cliproxyapi.conf" "$(brew --prefix)/etc/cliproxyapi.conf.bak"
-> ln -s ~/.cli-proxy-api/config.yaml "$(brew --prefix)/etc/cliproxyapi.conf"
-> brew services start cliproxyapi
+> mkdir -p "$HOME/.cli-proxy-api"
+>
+> # 只複製並備份一般檔案；符號連結保持不動。
+> # 加上時間戳的備份可避免覆寫既有的 .bak。
+> if [ -f "$brew_conf" ] && [ ! -L "$brew_conf" ]; then
+>   if [ -f "$home_conf" ] || cp "$brew_conf" "$home_conf"; then
+>     mv "$brew_conf" "${brew_conf}.bak.$(date +%Y%m%d-%H%M%S)"
+>   fi
+> fi
+>
+> # 只有在 Homebrew 路徑安全地指向既有設定檔後才啟動。
+> if [ ! -f "$home_conf" ]; then
+>   echo "在 $home_conf 找不到設定檔；服務未啟動。" >&2
+> elif [ -e "$brew_conf" ] && [ ! -L "$brew_conf" ]; then
+>   echo "無法安全地取代 $brew_conf；服務未啟動。" >&2
+> elif ln -sfn "$home_conf" "$brew_conf"; then
+>   brew services start cliproxyapi
+> else
+>   echo "無法建立設定檔符號連結；服務未啟動。" >&2
+> fi
 > ```
 
 ## Linux

@@ -4,6 +4,10 @@ outline: 'deep'
 
 # 管理 API
 
+::: warning 即將棄用
+`/v0/management` 即將棄用。請勿再依本文件開發新功能。請改用 [管理 API v8](./apiv8)。
+:::
+
 基底路徑：`http://localhost:8317/v0/management`
 
 此 API 用於管理 CLIProxyAPI 的執行階段設定與憑證檔案。所有變更都會寫入 YAML 設定檔，並由服務自動熱重新載入。
@@ -25,7 +29,7 @@ outline: 'deep'
 其他說明：
 - 設定環境變數 `MANAGEMENT_PASSWORD` 會將其視為額外的明文管理金鑰，並強制啟用遠端管理（即便 `remote-management.allow-remote` 為 false）。該值不會寫入設定，需要透過 `Authorization` / `X-Management-Key` 標頭直接傳送。
 - 透過 `cliproxy run --password <pwd>` 或 SDK 的 `WithLocalManagementPassword` 啟動服務後，來自 `127.0.0.1`/`::1` 的請求可使用該「本機密碼」替代遠端金鑰，同樣透過上述標頭傳遞；該密碼僅存在於執行時記憶體。
-- 僅當 `remote-management.secret-key` 為空且未設定 `MANAGEMENT_PASSWORD` 時，管理 API 才會整體被停用（所有 `/v0/management` 路由均傳回 404）。
+- 僅當 `remote-management.secret-key` 為空、未設定 `MANAGEMENT_PASSWORD`，且啟動時未設定本機管理密碼時，管理 API 路由才不會註冊（並傳回 404）。
 - 任何用戶端 IP（包括 localhost）若連續 5 次身分驗證失敗，都會觸發約 30 分鐘的暫時封鎖。
 
 ## 請求/回應約定
@@ -92,7 +96,7 @@ outline: 'deep'
       {"debug":true,"proxy-url":"","api-keys":["1...5","JS...W"],"quota-exceeded":{"switch-project":true,"switch-preview-model":true},"gemini-api-key":[{"api-key":"AI...01","base-url":"https://generativelanguage.googleapis.com","headers":{"X-Custom-Header":"custom-value"},"proxy-url":"","excluded-models":["gemini-1.5-pro","gemini-1.5-flash"]},{"api-key":"AI...02","proxy-url":"socks5://proxy.example.com:1080","excluded-models":["gemini-pro-vision"]}],"request-log":true,"request-retry":3,"claude-api-key":[{"api-key":"cr...56","base-url":"https://example.com/api","proxy-url":"socks5://proxy.example.com:1080","models":[{"name":"claude-3-5-sonnet-20241022","alias":"claude-sonnet-latest"}],"excluded-models":["claude-3-opus"]},{"api-key":"cr...e3","base-url":"http://example.com:3000/api","proxy-url":""},{"api-key":"sk-...q2","base-url":"https://example.com","proxy-url":""}],"codex-api-key":[{"api-key":"sk...01","base-url":"https://example/v1","proxy-url":"","excluded-models":["gpt-4o-mini"]}],"openai-compatibility":[{"name":"openrouter","base-url":"https://openrouter.ai/api/v1","api-key-entries":[{"api-key":"sk...01","proxy-url":""}],"models":[{"name":"moonshotai/kimi-k2:free","alias":"kimi-k2"}]}]}
       ```
     - 說明：
-        - 傳回中不再包含 `generative-language-api-key`；若需純字串檢視，可使用專用的 `GET /generative-language-api-key` 介面。
+        - 回應反映目前已載入的執行階段設定。
         - 若服務尚未載入設定檔，則傳回空物件 `{}`。
 
 ### 最新版本
@@ -152,7 +156,7 @@ outline: 'deep'
       { "ok": true, "changed": ["config"] }
       ```
     - 說明：
-        - 服務會先載入 YAML 驗證其有效性，驗證失敗傳回 `422` 以及 `{ "error": "invalid_config", "message": "..." }`。
+        - YAML 格式錯誤時傳回 `400` 以及 `{ "error": "invalid_yaml", "message": "..." }`；YAML 可解析但設定驗證失敗時傳回 `422` 以及 `{ "error": "invalid_config", "message": "..." }`。
         - 寫入失敗會傳回 `500`，格式 `{ "error": "write_failed", "message": "..." }`。
 
 ### 檔案記錄開關
@@ -1038,6 +1042,228 @@ outline: 'deep'
     - 說明：
         - `state` 參數必須與登入端點傳回的值一致；若狀態進入 `ok` 或 `error`，服務會清除該 state，再次輪詢會收到 `{ "status": "ok" }` 表示流程已收尾。
         - `status: "wait"` 表示仍在等待回呼或權杖交換，可視需要繼續輪詢。
+
+### 外掛
+
+- GET `/plugins` — 列出已發現、已設定與已註冊的外掛。回應包含全域 `plugins_enabled`、解析後的 `plugins_dir`，以及每個外掛的狀態，例如 `id`、`path`、`configured`、`registered`、`enabled`、`effective_enabled`、OAuth 支援、中繼資料、設定欄位與選單。
+- GET `/plugins/:id/config` — 傳回已儲存的 `plugins.configs.<id>` 物件。對於已發現或已註冊但未儲存設定的外掛，傳回 `{}`。
+- PUT `/plugins/:id/config` — 完整取代外掛設定物件。
+- PATCH `/plugins/:id/config` — 淺層合併設定物件。將欄位送為 `null` 會移除該頂層欄位。
+- PATCH `/plugins/:id/enabled` — 僅更新外掛的啟用旗標。請求：`{ "enabled": true }`。
+- DELETE `/plugins/:id` — 移除本機外掛檔案與其已儲存的設定。已載入但無法卸載的外掛會傳回 `409`，並附 `restart_required: true`。
+- GET `/plugin-store` — 列出已設定商店來源中的外掛，包括來源錯誤、安裝狀態、已安裝來源與是否有可用更新。
+- POST `/plugin-store/:id/install` — 從商店來源下載或更新外掛、在設定中啟用它，並傳回安裝路徑與版本。當 ID 重複時，用 `?source=<source-id>` 選取來源；也可選擇性地在查詢字串或請求體（`{ "version": "1.2.3" }`）中設定 `version`。
+
+外掛 ID 必須是有效的主機外掛 ID。從商店安裝可能會下載可執行的外掛檔案；使用前請先設定並信任商店來源。
+
+### 其他執行階段設定與記錄
+
+本節所有 PUT/PATCH 端點均使用 `{ "value": ... }`，並傳回 `{ "status": "ok" }`。
+
+- GET/PUT/PATCH `/logs-max-total-size-mb` — 記錄總大小上限（MiB）。負值會儲存為 `0`。
+- GET/PUT/PATCH `/error-logs-max-files` — 保留的請求錯誤記錄檔數量。更新為負值時會回退為 `10`。
+- GET/PUT/PATCH `/force-model-prefix` — 是否強制使用已設定模型前綴的布林開關。
+- GET/PUT/PATCH `/routing/strategy` — 憑證選取策略。有效值為 `round-robin`（也可寫為 `roundrobin`/`rr`）與 `fill-first`（也可寫為 `fillfirst`/`ff`）；GET 傳回 `{ "strategy": "..." }`。
+- GET `/logs` 也接受 `limit` 與不透明的 `cursor`。帶 `limit` 且未帶 `after` 時，傳回最新的記錄行。將傳回的 `next-cursor` 作為 `cursor` 傳入可增量讀取；發生重設時會傳回 `cursor-reset: true`。
+- GET `/request-log-by-id/:id` — 下載檔名以 `-<id>.log` 結尾的請求記錄。請求 ID 不得包含路徑分隔符。
+
+### 其他供應商 API 金鑰集合
+
+`/interactions-api-key`、`/xai-api-key` 與 `/vertex-api-key` 是物件陣列集合，支援 GET、PUT、PATCH 與 DELETE 方法。GET 傳回以端點名稱為鍵的物件，並在適用時加入執行階段的 `auth-index` 值。PUT 接受原始陣列或 `{ "items": [ ... ] }`；PATCH 使用 `{ "index": 0, "value": { ... } }` 或 `{ "match": "<api-key>", "value": { ... } }`；DELETE 接受 `?index=` 或 `?api-key=`（同一金鑰出現多次時請加上 `&base-url=`）。
+
+- `/interactions-api-key` 設定 Google Interactions API 金鑰。條目使用 Gemini 金鑰的結構：`api-key`、`priority`、`prefix`、`base-url`、`proxy-url`、`models`、`headers`、`excluded-models` 與 `disable-cooling`。
+- `/xai-api-key` 設定原生 xAI API 金鑰。條目使用 Codex 金鑰的結構，另外加上 `priority`、`websockets` 與 `disable-cooling`；保留的條目必須有 `base-url`，PATCH 將 `base-url` 設為空字串會移除該條目。
+- `/vertex-api-key` 設定 Vertex 相容 API 金鑰。PUT 時每個條目都必須提供 `api-key`；選擇性欄位為 `priority`、`prefix`、`base-url`、`proxy-url`、`headers`、`models` 與 `excluded-models`。模型條目使用 `name`、`alias`、選擇性的 `display-name` 與 `force-mapping`。PATCH 將 `api-key` 或 `base-url` 設為空字串會移除該條目。
+
+### OAuth 模型別名
+
+- GET `/oauth-model-alias` — 傳回 `{ "oauth-model-alias": { "<channel>": [ ... ] } }`。
+- PUT `/oauth-model-alias` — 完整取代管道與別名的對應表；請求體也可包裝為 `{ "items": { ... } }`。
+- PATCH `/oauth-model-alias` — 取代單一管道條目。請求：`{ "channel": "codex", "aliases": [{ "name": "upstream", "alias": "client-name", "fork": false, "display-name": "Client Name", "force-mapping": true }] }`。也可使用 `provider` 代替 `channel`；別名清單為空時會移除既有管道。
+- DELETE `/oauth-model-alias?channel=codex` — 移除一個管道。查詢參數名稱也可使用 `provider`。
+
+### 憑證檔案擴充介面
+
+- GET `/auth-files/models?name=<name-or-auth-id>` — 傳回單一憑證支援的模型定義，格式為 `{ "models": [...] }`。
+- GET `/model-definitions/:channel` — 傳回靜態目錄中繼資料，格式為 `{ "channel": "...", "models": [...] }`；未知的管道傳回 `400`。省略必要的 `:channel` 路徑段不會符合此路由，會傳回 `404`。
+- PATCH `/auth-files/status` — 啟用或停用憑證記錄。請求：`{ "name": "<file-name-or-id>", "disabled": true }`。已設定的 API 金鑰記錄是透過其 `excluded-models` 設定停用的；外掛的虛擬子憑證無法獨立變更。
+- PATCH `/auth-files/fields` — 更新檔名或憑證 ID 對應的中繼資料欄位。請求體包含 `name` 與一個以上欄位；點路徑可更新巢狀中繼資料，例如 `{ "name": "acc.json", "project_id": "my-project", "headers.X-Team": "prod" }`。`headers` 物件會與既有自訂標頭合併，標頭值為空時會移除該標頭。
+
+### 帶身分驗證的上游呼叫
+
+- POST `/api-call` — 發出對外 HTTP 請求，可選擇性地使用 `auth_index` 指定的憑證（也接受 `authIndex` 或 `AuthIndex`）。請求欄位為 `method`、絕對 `url`、選擇性的字串對應表 `header`，以及選擇性的原始字串 `data`。
+- 在標頭值中使用 `$TOKEN$` 可替換為所選憑證的存取權杖或 API 金鑰。憑證個別的代理設定優先於全域 `proxy-url`；否則請求會直接連線。回應為 `{ "status_code": 200, "header": { ... }, "body": "..." }`，上游狀態會保留在 `status_code` 中。
+
+此端點可使用已設定的憑證發出任意對外請求。請據此限制管理金鑰的存取權限。
+
+### 其他 OAuth 流程與回呼
+
+- GET `/kimi-auth-url` 與 GET `/xai-auth-url` 會啟動裝置碼流程。兩者都傳回 `status`、`url`、`state` 與 `flow: "device"`；也可能傳回 `user_code` 與 `expires_in`。
+- DELETE `/oauth-session?state=<state>` 取消待處理的 OAuth 工作階段，並傳回 `{ "status": "ok", "cancelled": true|false }`。已取消的裝置碼或回呼流程不會儲存憑證。
+- GET/POST `/oauth-callback` 在需身分驗證的路由群組之外接受 OAuth 回呼資料。GET 使用 `provider`、`state`、`code` 與 `error`/`error_description` 查詢參數。POST 接受 `{ "provider", "redirect_url", "code", "state", "error" }`；`redirect_url` 可提供回呼查詢值。只有當 state 有效、仍在待處理，且其供應商與工作階段相符時，回呼才會被接受。
+- `GET /get-auth-status?state=...` 在工作階段待處理時傳回 `wait`，完成後傳回 `ok`，失敗、取消、過期或 state 未知時傳回 `error`。已完成的 state 會短暫保留，讓用戶端能觀察到 `ok`。
+
+### 新增端點範例
+
+以下範例除未經身分驗證的 `/oauth-callback` 範例外，都需要 `Authorization: Bearer <MANAGEMENT_KEY>`。
+
+#### 外掛
+
+- 列出本機外掛：
+  ```bash
+  curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' \
+    http://localhost:8317/v0/management/plugins
+  ```
+  ```json
+  {
+    "plugins_enabled": true,
+    "plugins_dir": "/abs/path/plugins",
+    "plugins": [{
+      "id": "example-plugin", "path": "/abs/path/plugins/example-plugin.so",
+      "configured": true, "registered": true, "enabled": true,
+      "effective_enabled": true, "supports_oauth": false,
+      "oauth_provider": "", "logo": "", "config_fields": [], "menus": [],
+      "metadata": { "name": "Example", "version": "1.0.0", "author": "Example", "github_repository": "", "logo": "", "config_fields": [] }
+    }]
+  }
+  ```
+- 讀取、取代、修補、啟用與刪除外掛設定：
+  ```bash
+  curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' \
+    http://localhost:8317/v0/management/plugins/example-plugin/config
+  # {"enabled":true,"priority":10,"endpoint":"https://plugin.example.com"}
+
+  curl -X PUT -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' \
+    -d '{"enabled":true,"priority":10,"endpoint":"https://plugin.example.com"}' \
+    http://localhost:8317/v0/management/plugins/example-plugin/config
+  # {"status":"ok"}
+
+  curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' \
+    -d '{"priority":20,"endpoint":null}' \
+    http://localhost:8317/v0/management/plugins/example-plugin/config
+  # {"status":"ok"}
+
+  curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' \
+    -d '{"enabled":false}' http://localhost:8317/v0/management/plugins/example-plugin/enabled
+  # {"status":"ok"}
+  ```
+  ```bash
+  curl -X DELETE -H 'Authorization: Bearer <MANAGEMENT_KEY>' \
+    http://localhost:8317/v0/management/plugins/example-plugin
+  ```
+  ```json
+  { "status": "deleted", "id": "example-plugin", "path": "/abs/path/plugins/example-plugin.so", "file_deleted": true, "configured_removed": true, "restart_required": false }
+  ```
+- 列出外掛商店並從中安裝：
+  ```bash
+  curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/plugin-store
+  ```
+  ```json
+  { "plugins_enabled": true, "plugins_dir": "/abs/path/plugins", "sources": [{"id":"official","name":"Official","url":"https://example.com/registry.json"}], "plugins": [{"store_id":"official/example-plugin","source_id":"official","source_name":"Official","source_url":"https://example.com/registry.json","id":"example-plugin","name":"Example","description":"Example plugin","author":"Example","version":"1.2.3","repository":"example/example-plugin","install_type":"github-release","auth_required":false,"auth_configured":true,"installed":false,"installed_version":"","path":"","configured":false,"registered":false,"enabled":false,"effective_enabled":false,"update_available":false}] }
+  ```
+  ```bash
+  curl -X POST -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' \
+    -d '{"version":"1.2.3"}' 'http://localhost:8317/v0/management/plugin-store/example-plugin/install?source=official'
+  ```
+  ```json
+  { "status": "installed", "source_id": "official", "source_name": "Official", "source_url": "https://example.com/registry.json", "id": "example-plugin", "version": "1.2.3", "install_type": "github-release", "path": "/abs/path/plugins/example-plugin.so", "plugins_enabled": true, "restart_required": false }
+  ```
+
+#### 執行階段設定與記錄
+
+```bash
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/logs-max-total-size-mb
+# {"logs-max-total-size-mb":512}
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"value":20}' http://localhost:8317/v0/management/error-logs-max-files
+# {"status":"ok"}
+curl -X PUT -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"value":true}' http://localhost:8317/v0/management/force-model-prefix
+# {"status":"ok"}
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"value":"fill-first"}' http://localhost:8317/v0/management/routing/strategy
+# {"status":"ok"}
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/logs?limit=2'
+```
+```json
+{ "lines": ["2026-05-05 12:00:00 info request accepted"], "line-count": 1, "latest-timestamp": 1777982400, "next-cursor": "<OPAQUE_CURSOR>" }
+```
+```bash
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/logs?cursor=<OPAQUE_CURSOR>&limit=100'
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' -OJ http://localhost:8317/v0/management/request-log-by-id/req_123
+```
+
+#### 供應商 API 金鑰集合
+
+以下範例展示每個集合的所有方法。請依所需的供應商替換端點與金鑰結構。
+
+```bash
+# Interactions：GET、PUT、PATCH、DELETE
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/interactions-api-key
+# {"interactions-api-key":[{"api-key":"AIza...","auth-index":"a1b2","base-url":"https://generativelanguage.googleapis.com","excluded-models":[]}]}
+curl -X PUT -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '[{"api-key":"AIza...","priority":10,"prefix":"team/","base-url":"https://generativelanguage.googleapis.com","proxy-url":"","models":[],"headers":{"X-Team":"prod"},"excluded-models":["gemini-2.0-flash"],"disable-cooling":true}]' http://localhost:8317/v0/management/interactions-api-key
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"index":0,"value":{"proxy-url":"socks5://127.0.0.1:1080"}}' http://localhost:8317/v0/management/interactions-api-key
+curl -X DELETE -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/interactions-api-key?api-key=AIza...&base-url=https%3A%2F%2Fgenerativelanguage.googleapis.com'
+# 每次變更都傳回：{"status":"ok"}
+
+# xAI：GET、PUT、PATCH、DELETE
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/xai-api-key
+# {"xai-api-key":[{"api-key":"xai...","auth-index":"c3d4","base-url":"https://api.x.ai/v1","websockets":true}]}
+curl -X PUT -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '[{"api-key":"xai...","priority":10,"prefix":"xai/","base-url":"https://api.x.ai/v1","websockets":true,"proxy-url":"","models":[{"name":"grok-3","alias":"grok"}],"headers":{},"excluded-models":[],"disable-cooling":false}]' http://localhost:8317/v0/management/xai-api-key
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"match":"xai...","value":{"websockets":false}}' http://localhost:8317/v0/management/xai-api-key
+curl -X DELETE -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/xai-api-key?index=0'
+# 每次變更都傳回：{"status":"ok"}
+
+# Vertex 相容：GET、PUT、PATCH、DELETE
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/vertex-api-key
+# {"vertex-api-key":[{"api-key":"vertex...","auth-index":"e5f6","base-url":"https://vertex.example.com"}]}
+curl -X PUT -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '[{"api-key":"vertex...","priority":10,"prefix":"vertex/","base-url":"https://vertex.example.com","proxy-url":"","headers":{},"models":[{"name":"gemini-2.5-pro","alias":"vertex-gemini","display-name":"Vertex Gemini","force-mapping":true}],"excluded-models":[]}]' http://localhost:8317/v0/management/vertex-api-key
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"match":"vertex...","value":{"headers":{"X-Team":"prod"}}}' http://localhost:8317/v0/management/vertex-api-key
+curl -X DELETE -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/vertex-api-key?index=0'
+# 每次變更都傳回：{"status":"ok"}
+```
+
+#### OAuth 別名、憑證檔案與上游呼叫
+
+```bash
+# OAuth 模型別名：GET、PUT、PATCH、DELETE
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/oauth-model-alias
+# {"oauth-model-alias":{"codex":[{"name":"gpt-5","alias":"gpt-5-fast","fork":true,"display-name":"GPT-5 Fast","force-mapping":true}]}}
+curl -X PUT -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"codex":[{"name":"gpt-5","alias":"gpt-5-fast","fork":true,"display-name":"GPT-5 Fast","force-mapping":true}]}' http://localhost:8317/v0/management/oauth-model-alias
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"channel":"codex","aliases":[{"name":"gpt-5","alias":"gpt-5-fast"}]}' http://localhost:8317/v0/management/oauth-model-alias
+curl -X DELETE -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/oauth-model-alias?channel=codex'
+# 每次變更都傳回：{"status":"ok"}
+
+# 憑證模型、靜態定義、狀態與中繼資料
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/auth-files/models?name=codex-user.json'
+# {"models":[{"id":"gpt-5","display_name":"GPT-5","type":"model","owned_by":"openai"}]}
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/model-definitions/codex
+# {"channel":"codex","models":[...]}
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"name":"codex-user.json","disabled":true}' http://localhost:8317/v0/management/auth-files/status
+# {"status":"ok","disabled":true}
+curl -X PATCH -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"name":"codex-user.json","project_id":"my-project","headers.X-Team":"prod"}' http://localhost:8317/v0/management/auth-files/fields
+# {"status":"ok"}
+
+# 帶身分驗證的上游請求
+curl -X POST -H 'Authorization: Bearer <MANAGEMENT_KEY>' -H 'Content-Type: application/json' -d '{"auth_index":"a1b2","method":"GET","url":"https://api.example.com/v1/ping","header":{"Authorization":"Bearer $TOKEN$"}}' http://localhost:8317/v0/management/api-call
+# {"status_code":200,"header":{"Content-Type":["application/json"]},"body":"{\"ok\":true}"}
+```
+
+#### 裝置 OAuth 與回呼
+
+```bash
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/kimi-auth-url
+# {"status":"ok","url":"https://...","state":"kmi-...","flow":"device","user_code":"ABCD-EFGH","expires_in":900}
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' http://localhost:8317/v0/management/xai-auth-url
+# {"status":"ok","url":"https://...","state":"xai-...","flow":"device","user_code":"ABCD-EFGH","expires_in":1800}
+curl -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/get-auth-status?state=xai-...'
+# {"status":"wait"}
+curl -X DELETE -H 'Authorization: Bearer <MANAGEMENT_KEY>' 'http://localhost:8317/v0/management/oauth-session?state=xai-...'
+# {"status":"ok","cancelled":true}
+
+# 回呼路由不使用管理金鑰中介軟體；由 state 驗證保護。
+curl 'http://localhost:8317/v0/management/oauth-callback?provider=codex&state=codex-...&code=AUTHORIZATION_CODE'
+# {"status":"ok"}
+curl -X POST -H 'Content-Type: application/json' -d '{"provider":"codex","state":"codex-...","code":"AUTHORIZATION_CODE"}' http://localhost:8317/v0/management/oauth-callback
+# {"status":"ok"}
+```
 
 ## 錯誤回應
 

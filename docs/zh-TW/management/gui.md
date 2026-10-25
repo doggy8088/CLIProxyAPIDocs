@@ -1,6 +1,29 @@
 # 桌面 GUI
 
-專案位址：
-[EasyCLI](https://github.com/router-for-me/EasyCLI)
+專案位址：[EasyCLIProxyAPI](https://github.com/router-for-me/EasyCLIProxyAPI)
 
-EasyCLI 是跨平台的 CLIProxyAPI 桌面用戶端。
+EasyCLIProxyAPI（ecpa）是 CLIProxyAPI 官方推出的桌面用戶端，主要面向在本機部署使用的使用者。
+
+## 功能介紹
+EasyCLIProxyAPI 可以將多個 Codex、Antigratity、Grok、Claude 等帳號的訂閱額度反向代理成 API（支援 OpenAI、Anthropic、Gemini 格式互換），供任意工具使用，實現 token free（自由）。同時也支援多個 API 聚合接入，方便使用者接入多個管道使用。此外還提供了代理程式設定功能，便於使用者一鍵設定 `codex`、`claude code`、`opencode`、`pi`、`openclaw` 等代理程式。
+
+
+## 使用教學
+
+軟體支援 OAuth 帳號登入和 API 接入兩種方式，依需求選擇即可。接入之後，即可在首頁複製 API URL 和 API Key，可用於接入代理程式應用，或用於開發自己的 AI 應用。
+
+### OAuth 接入
+進入軟體的 OAuth 頁面後，選擇所需平台的帳號登入，軟體會自動使用預設瀏覽器開啟登入頁面，如需指定瀏覽器請在右上角選擇。在頁面登入後，可在「憑證檔案」處管理憑證檔案。
+
+### API 接入
+API 接入方式需要使用者在軟體中設定 `API Key`，如果是 `OpenAI 相容格式`，使用者還可自行選擇所支援的思考等級。
+
+## 設定代理程式
+
+各個代理程式的設定方法基本一致，選用合適的模型並套用設定後，重新啟動代理程式軟體即可。
+
+### Codex 代理程式
+Codex 代理程式有兩種設定方式，分別是 `OAuth 設定方式` 和 `API 設定方式`。OAuth 設定方式可正確識別模型清單，優先推薦這個方法，但需使用者先使用 ChatGPT 帳號（任意訂閱，包含 `免費帳號`）登入 Codex。另外需注意的是，憑證檔案使用太久之後可能會失效，需要重新登入。
+
+## 分享給其他人使用
+軟體預設監聽 `127.0.0.1` 本機回環位址，如需對外開放使用，則需在「進階設定」中開啟「允許區域網路」選項，此時將監聽 `0.0.0.0` 位址。區域網路內的其他使用者也可使用 API 服務，可依需求分配金鑰。系統防火牆可能會阻止區域網路的存取，需要使用者進行合理的設定。

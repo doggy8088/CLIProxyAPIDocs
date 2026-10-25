@@ -96,6 +96,7 @@ export default defineConfig({
 				items: [
 					{ text: 'Web UI', link: `${localePrefix}/management/webui` },
 					{ text: '桌面 GUI', link: `${localePrefix}/management/gui` },
+					{ text: '管理 API v8', link: `${localePrefix}/management/apiv8` },
 					{ text: '管理 API', link: `${localePrefix}/management/api` },
 					{
 						text: 'Redis 用量佇列',
@@ -110,6 +111,8 @@ export default defineConfig({
 					{ text: 'Codex', link: `${localePrefix}/agent-client/codex` },
 					{ text: 'Factory Droid', link: `${localePrefix}/agent-client/droid` },
 					{ text: 'OpenCode', link: `${localePrefix}/agent-client/opencode` },
+					{ text: 'Grok Build', link: `${localePrefix}/agent-client/grok-build` },
+					{ text: 'PI', link: `${localePrefix}/agent-client/pi` },
 				],
 			},
 			{
