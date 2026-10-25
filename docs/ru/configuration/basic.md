@@ -8,6 +8,9 @@
 ./cli-proxy-api --config /path/to/your/config.yaml
 ```
 
+> При установке через Homebrew на macOS и запуске с помощью `brew services` по умолчанию используется `$(brew --prefix)/etc/cliproxyapi.conf` (обычно `/opt/homebrew/etc/cliproxyapi.conf` для Apple Silicon и `/usr/local/etc/cliproxyapi.conf` для Intel).
+> Если вы хотите использовать `~/.cli-proxy-api/config.yaml`, настройте путь Homebrew по умолчанию так, чтобы он **указывал** на этот файл, и убедитесь, что цель символической ссылки существует до запуска `brew services start` (полные инструкции см. в разделе [Быстрый старт — macOS](../introduction/quick-start.md)).
+
 ### Пример конфигурации
 
 ```yaml
@@ -115,6 +118,7 @@ codex-instructions-enabled: false
 streaming:
   keepalive-seconds: 15 # По умолчанию: 0 (отключено). <= 0 отключает keep-alive.
   bootstrap-retries: 1 # По умолчанию: 0 (отключено). Повторы до отправки первого байта.
+  send-keepalive-before-ft: false # По умолчанию: false. Отправлять SSE keep-alive до первого токена при keepalive-seconds > 0.
 
 # API-ключи Gemini
 gemini-api-key:

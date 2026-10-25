@@ -95,6 +95,7 @@ export default defineConfig({
 				items: [
 					{ text: 'Web UI', link: '/management/webui' },
 					{ text: 'Desktop GUI', link: '/management/gui' },
+					{ text: 'Management API v8', link: '/management/apiv8' },
 					{ text: 'Management API', link: '/management/api' },
 					{
 						text: 'Redis Usage Queue',
@@ -108,7 +109,9 @@ export default defineConfig({
 					{ text: 'Claude Code', link: '/agent-client/claude-code' },
 					{ text: 'Codex', link: '/agent-client/codex' },
 					{ text: 'Factory Droid', link: '/agent-client/droid' },
-					{ text: 'OpenCode', link: '/agent-client/opencode' }
+					{ text: 'OpenCode', link: '/agent-client/opencode' },
+					{text: 'Grok Build', link: '/agent-client/grok-build'},
+					{text: 'PI', link: '/agent-client/pi'}
 				],
 			},
 			{
@@ -353,6 +356,7 @@ export default defineConfig({
 						items: [
 							{ text: 'Web UI', link: '/ru/management/webui' },
 							{ text: 'Desktop GUI', link: '/ru/management/gui' },
+							{ text: 'Management API v8', link: '/ru/management/apiv8' },
 							{ text: 'Management API', link: '/ru/management/api' },
 							{
 								text: 'Redis Usage Queue',
@@ -367,6 +371,8 @@ export default defineConfig({
 							{ text: 'Codex', link: '/ru/agent-client/codex' },
 							{ text: 'Factory Droid', link: '/ru/agent-client/droid' },
 							{ text: 'OpenCode', link: '/ru/agent-client/opencode' },
+							{ text: 'Grok Build', link: '/ru/agent-client/grok-build' },
+							{ text: 'PI', link: '/ru/agent-client/pi' }
 						],
 					},
 					{

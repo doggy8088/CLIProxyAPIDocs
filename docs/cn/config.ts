@@ -57,6 +57,7 @@ export default defineConfig({
                 items: [
                     {text: 'Web UI', link: '/cn/management/webui'},
                     {text: '桌面客户端', link: '/cn/management/gui'},
+                    {text: '管理 API v8', link: '/cn/management/apiv8'},
                     {text: '管理 API', link: '/cn/management/api'},
                     {text: 'Redis 用量队列', link: '/cn/management/redis-usage-queue'},
                 ]
@@ -67,7 +68,9 @@ export default defineConfig({
                     {text: 'Claude Code', link: '/cn/agent-client/claude-code'},
                     {text: 'Codex', link: '/cn/agent-client/codex'},
                     {text: 'Factory Droid', link: '/cn/agent-client/droid'},
-                    {text: 'OpenCode', link: '/cn/agent-client/opencode'}
+                    {text: 'OpenCode', link: '/cn/agent-client/opencode'},
+                    {text: 'Grok Build', link: '/cn/agent-client/grok-build'},
+                    {text: 'PI', link: '/cn/agent-client/pi'}
                 ]
             },
             {

@@ -19,13 +19,17 @@ model_provider = "cliproxyapi"
 model_reasoning_effort = "xhigh"
 plan_mode_reasoning_effort = "xhigh"
 
+experimental_realtime_webrtc_call_base_url = "http://127.0.0.1:8317/v1" # Codex App voice chat requires WebRTC. If you do not use voice chat, you can omit this option.
+experimental_realtime_ws_base_url = "http://127.0.0.1:8317/v1" # Codex App voice chat requires WebRTC. If you do not use voice chat, you can omit this option.
+
 [model_providers.cliproxyapi]
 base_url = "http://127.0.0.1:8317/v1"
-experimental_bearer_token = "sk-dummy" # Replace with the API Key you created for Codex in CLIProxyAPI
+http_headers = { "X-Api-Key" = "sk-dummy" }  # Replace with the API Key you created for Codex in CLIProxyAPI
 name = "OpenAI"
 wire_api = "responses"
 requires_openai_auth = true
 supports_websockets = true # Choose whether to enable websockets as needed
+supports_standalone_web_search = true
 ```
 
 No need to edit the `auth.json` file.
@@ -50,6 +54,8 @@ model_reasoning_effort = "high"
 name = "cliproxyapi"
 base_url = "http://127.0.0.1:8317/v1"
 wire_api = "responses"
+http_headers = { "X-OpenAI-Actor-Authorization" = "local-proxy" }
+requires_openai_auth = true
 ```
 
 auth.json:

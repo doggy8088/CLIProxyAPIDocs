@@ -9,7 +9,7 @@
 ```
 
 > macOS 通过 Homebrew 安装并以 `brew services` 运行时，默认读取 `$(brew --prefix)/etc/cliproxyapi.conf`（Apple Silicon 常见为 `/opt/homebrew/etc/cliproxyapi.conf`，Intel 常见为 `/usr/local/etc/cliproxyapi.conf`）。
-> 若希望沿用 `~/.cli-proxy-api/config.yaml`，可将其软链接到该默认路径。
+> 若希望沿用 `~/.cli-proxy-api/config.yaml`，请让 Homebrew 默认路径**指向**该文件，并在 `brew services start` 前确保软链目标已存在（完整步骤见 [快速开始 — macOS](../introduction/quick-start.md)）。
 
 ### 配置文件示例
 
@@ -115,8 +115,9 @@ codex-instructions-enabled: false
 
 # 流式传输行为（SSE keep-alive 与安全启动重试）
 streaming:
-  keepalive-seconds: 15   # 默认：0（禁用）；≤0 关闭 keep-alive。
-  bootstrap-retries: 1    # 默认：0（禁用）；首字节前的重试次数。
+  keepalive-seconds: 15         # 默认：0（禁用）；≤0 关闭 keep-alive。
+  bootstrap-retries: 1          # 默认：0（禁用）；首字节前的重试次数。
+  send-keepalive-before-ft: false # 默认：false；当 keepalive-seconds > 0 时是否在首个 token 前发送保活。
 
 # Gemini API 密钥
 gemini-api-key:
