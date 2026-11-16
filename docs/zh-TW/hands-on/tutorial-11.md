@@ -10,7 +10,7 @@ CLIProxyAPI 自 v6.3.x 起支援透過 WebSocket 串接 AI 供應商，第一個
 
 ### 第一步：設定 AIStudioBuild 應用程式
 
-依 `CLIProxyAPI` 設定調整 AIStudioBuild 的 WebSocket 通訊程式。先開啟官方[範例程式](https://aistudio.google.com/apps/drive/1CPW7FpWGsDZzkaYgYOyXQ_6FWgxieLmL)並建立副本，再修改圖中標示的兩個位置。若 `CLIProxyAPI` 的 `ws-auth` 設為 `true`，請將 `JWT_TOKEN` 設為 `CLIProxyAPI` 中用於身分驗證的 `api-keys` 值。接著將 `WEBSOCKET_PROXY_URL` 設為 `CLIProxyAPI` 位址，例如 `wss://mycap.example.com/v1/ws`。儲存設定後，記下應用程式連結供後續使用。
+依 `CLIProxyAPI` 設定調整 AIStudioBuild 的 WebSocket 通訊程式。先開啟官方[範例程式](https://ai.studio/apps/949f2248-4b3c-44f9-8e6e-5a967ab930be)並建立副本，再修改圖中標示的兩個位置。若 `CLIProxyAPI` 的 `ws-auth` 設為 `true`，請將 `JWT_TOKEN` 設為 `CLIProxyAPI` 中用於身分驗證的 `api-keys` 值。接著將 `WEBSOCKET_PROXY_URL` 設為 `CLIProxyAPI` 位址，例如 `wss://mycap.example.com/v1/ws`。儲存設定後，記下應用程式連結供後續使用。
 
 ![](https://img.072899.xyz/2025/11/359a2572d0206c20dba7fe12a136d6e8.png)
 

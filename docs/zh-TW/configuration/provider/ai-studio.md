@@ -1,10 +1,10 @@
 # AI Studio 使用說明
 
-您可以將本服務 (CLIProxyAPI) 作為後端，配合 [這個 AI Studio 應用程式](https://aistudio.google.com/apps/drive/1CPW7FpWGsDZzkaYgYOyXQ_6FWgxieLmL) 使用。請遵循以下步驟進行設定：
+您可以將本服務 (CLIProxyAPI) 作為後端，配合 [這個 AI Studio 應用程式](https://ai.studio/apps/949f2248-4b3c-44f9-8e6e-5a967ab930be) 使用。請遵循以下步驟進行設定：
 
 1.  **啟動 CLIProxyAPI 服務**：確保您的 CLIProxyAPI 執行個體正在本機或遠端執行。
 2.  **存取 AI Studio 應用程式**：在瀏覽器中登入您的 Google 帳號，然後開啟以下連結：
-    - [https://aistudio.google.com/apps/drive/1CPW7FpWGsDZzkaYgYOyXQ_6FWgxieLmL](https://aistudio.google.com/apps/drive/1CPW7FpWGsDZzkaYgYOyXQ_6FWgxieLmL)
+    - [https://ai.studio/apps/949f2248-4b3c-44f9-8e6e-5a967ab930be](https://ai.studio/apps/949f2248-4b3c-44f9-8e6e-5a967ab930be)
 
 > **注意：** 若使用 Brave 瀏覽器，可能需要停用 Shields 功能，否則 WebSocket 連線可能遭到封鎖。其他廣告攔截器也可能造成相同問題。
 
